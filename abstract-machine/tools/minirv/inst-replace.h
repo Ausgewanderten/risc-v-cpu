@@ -240,10 +240,10 @@ def_logic(xor)
 
   la tp, _same_result_table
   add tp, tp, gp
-  lbu \rd, (tp)
 
   POP(s1, 2)
   POP(s0, 1)
+  lbu \rd, (tp)
 .endm
 
 .macro check_8bit_0 table, rd, boffset  # rd = (source is 0 ? 0 : 1)
@@ -267,9 +267,9 @@ def_logic(xor)
 
   la tp, _same_result_table
   add tp, tp, gp
-  lbu \rd, (tp)
 
   POP(s0, 1)
+  lbu \rd, (tp)
 .endm
 
 #define SET_BRANCH_LABEL(name) concat(name, _\@\target):

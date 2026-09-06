@@ -54,11 +54,21 @@ $(shell mkdir -p $(DST_DIR))
 IMAGE_REL = build/$(NAME)-$(ARCH)
 IMAGE     = $(abspath $(IMAGE_REL))
 ARCHIVE   = $(WORK_DIR)/build/$(NAME)-$(ARCH).a
+ifneq ($(MAKECMDGOALS),archive)
+ifdef diskfilelist
+RAMDISK_SRC = $(WORK_DIR)/build/$(NAME).ramdisk.c
+
+$(RAMDISK_SRC): $(diskfilelist)
+	/usr/bin/python3 $(AM_HOME)/tools/gen-ramdisk.py $@ $^
+
+SRCS += $(RAMDISK_SRC)
+endif
+endif
 
 ### Collect the files to be linked: object files (`.o`) and libraries (`.a`)
 OBJS      = $(addprefix $(DST_DIR)/, $(addsuffix .o, $(basename $(SRCS))))
 LIBS     := $(sort $(LIBS) am klib) # lazy evaluation ("=") causes infinite recursions
-LINKAGE   = $(OBJS)  # library archives are added by LIB_TEMPLATE below
+LINKAGE   += $(OBJS)  # library archives are added by LIB_TEMPLATE below
 
 ## 3. General Compilation Flags
 

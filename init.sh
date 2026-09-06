@@ -72,6 +72,9 @@ case $1 in
   archbench)
     init OSCPU/archbench main archbench false BENCH_HOME
     ;;
+  ysyxSoC)
+    init OSCPU/ysyxSoC 2607 ysyxSoC false
+    ;;
   *)
     echo "Invalid input..."
     exit
