@@ -1,0 +1,6 @@
+top=top
+x (SW7, SW6, SW5, SW4, SW3, SW2, SW1, SW0)
+en BTNC
+led_code (LD2, LD1, LD0)
+led_valid LD4
+hex0 (SEG0G, SEG0F, SEG0E, SEG0D, SEG0C, SEG0B, SEG0A)

@@ -1,16 +1,30 @@
-*.*
-*
-!*/
-!/nemu/*
-!/nexus-am/*
-!/nanos-lite/*
-!/navy-apps/*
-!/npc/*
-!Makefile
-!README.md
-!.gitignore
-!init.sh
-/fceux-am
-/nvboard
-/archbench
-/ysyxSoC
+# Build artifacts and generated simulation output
+build/
+obj_dir/
+out/
+CMakeFiles/
+autom4te.cache/
+*.o
+*.a
+*.so
+*.so.*
+*.d
+*.out
+*.vcd
+*.fst
+*.log
+
+# Local caches and editor files
+__pycache__/
+.cache/
+*.pyc
+*.swp
+*~
+
+# Local agent settings and credentials
+/.agents/
+/.codex/
+/.aws/
+.env
+.env.local
+.env.*.local
