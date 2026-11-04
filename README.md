@@ -19,3 +19,21 @@
 | [`programfile/`](programfile/) | 小型 C 程序练习 |
 | [`archbench/`](archbench/) | 体系结构基准程序及输入数据 |
 | [`fceux-am/`](fceux-am/) | AM 平台上的 FCEUX 相关工程
+
+CPU 与仿真入口
+
+[`minirv_npc/vsrc/`](minirv_npc/vsrc/) 中的主要模块如下：
+
+| 文件 | 作用 |
+| --- | --- |
+| `ysyx_00000000.v` | CPU 顶层，连接取指、译码、执行、寄存器堆和访存模块 |
+| `ifu.v` | 取指与执行流程控制 |
+| `idu.v` | 指令译码及立即数生成 |
+| `exu.v` | 执行单元 |
+| `RegisterFile.v` | 寄存器堆 |
+| `lsu.v` | 数据访存接口 |
+| `imem.v` / `dmem.v` | 通过 DPI-C 访问存储器的模块；当前 SoC 构建以顶层实际连接为准 |
+
+当前译码代码包含 `addi`、`add`、`lui`、`jalr`、`lw`、`sw`、`lbu`、`sb` 和 `ebreak` 的识别逻辑。这是对现有代码的描述，不代表指令行为已经通过完整验证。
+
+CPU 顶层模块名为 `ysyx_00000000`。SoC 仿真顶层为 `SimTop`，定义在 `ysyxSoC/ready-to-run/minirv/ElaborateTop.v` 中，C++ 仿真入口为 [`minirv_npc/csrc/test.cpp`](minirv_npc/csrc/test.cpp)。
