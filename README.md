@@ -34,6 +34,6 @@ CPU 与仿真入口
 | `lsu.v` | 数据访存接口 |
 | `imem.v` / `dmem.v` | 通过 DPI-C 访问存储器的模块；当前 SoC 构建以顶层实际连接为准 |
 
-当前译码代码包含 `addi`、`add`、`lui`、`jalr`、`lw`、`sw`、`lbu`、`sb` 和 `ebreak` 的识别逻辑。这是对现有代码的描述，不代表指令行为已经通过完整验证。
+当前译码代码包含 `addi`、`add`、`lui`、`jalr`、`lw`、`sw`、`lbu`、`sb` 和 `ebreak` 指令
 
 CPU 顶层模块名为 `ysyx_00000000`。SoC 仿真顶层为 `SimTop`，定义在 `ysyxSoC/ready-to-run/minirv/ElaborateTop.v` 中，C++ 仿真入口为 [`minirv_npc/csrc/test.cpp`](minirv_npc/csrc/test.cpp)。
