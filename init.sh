@@ -1,12 +1,24 @@
 #!/bin/bash
 
+# pick the rc file of the user's login shell
+case `basename "$SHELL"` in
+  zsh)  RCFILE=${ZDOTDIR:-$HOME}/.zshrc ;;
+  bash) RCFILE=~/.bashrc ;;
+  *)    RCFILE= ;;
+esac
+
 # usage: addenv env_name path
 function addenv() {
-  sed -i -e "/^export $1=.*/d" ~/.bashrc
-  echo "export $1=`readlink -f $2`" >> ~/.bashrc
-  echo "By default this script will add environment variables into ~/.bashrc."
-  echo "After that, please run 'source ~/.bashrc' to let these variables take effect."
-  echo "If you use shell other than bash, please add these environment variables manually."
+  if [ -z "$RCFILE" ]; then
+    echo "Unsupported shell $SHELL, please add the following environment variable manually:"
+    echo "  $1=`readlink -f $2`"
+    return
+  fi
+  touch $RCFILE
+  sed -i --follow-symlinks -e "/^export $1=.*/d" $RCFILE
+  echo "export $1=`readlink -f $2`" >> $RCFILE
+  echo "Environment variable $1 has been added into $RCFILE."
+  echo "Please run 'source $RCFILE' to let it take effect."
 }
 
 # usage: init repo branch directory trace [env]
@@ -18,8 +30,16 @@ function init() {
   fi
 
   while [ ! -d $3 ]; do
-    git clone -b $2 git@github.com:$1.git $3
+    git clone --depth 1 -b $2 git@github.com:$1.git $3
   done
+  if [ -f "$3/.gitignore" ]; then
+    ln -sf "../AGENTS.md" "$3/AGENTS.md"
+    #Add '\n' if the last character isn't '\n'
+    if [ -n "$(tail -c 1 "$3/.gitignore")" ]; then
+      printf '\n' >> "$3/.gitignore"
+    fi
+    echo '!AGENTS.md' >> "$3/.gitignore"
+  fi
   log="$1 `cd $3 && git log --oneline --no-abbrev-commit -n1`"$'\n'
 
   if [ $4 == "true" ] ; then
@@ -43,17 +63,17 @@ case $1 in
     init NJU-ProjectN/nemu ics2024 nemu true NEMU_HOME
     ;;
   abstract-machine)
-    init NJU-ProjectN/abstract-machine ics2024 abstract-machine true AM_HOME
+    init NJU-ProjectN/abstract-machine ics2026 abstract-machine true AM_HOME
     init NJU-ProjectN/fceux-am ics2021 fceux-am false
     ;;
   am-kernels)
-    init NJU-ProjectN/am-kernels ics2021 am-kernels false
+    init NJU-ProjectN/am-kernels ics2026 am-kernels false
     ;;
   nanos-lite)
     init NJU-ProjectN/nanos-lite ics2021 nanos-lite true
     ;;
   navy-apps)
-    init NJU-ProjectN/navy-apps ics2024 navy-apps true NAVY_HOME
+    init NJU-ProjectN/navy-apps ics2024 navy-apps false NAVY_HOME
     ;;
   nvboard)
     init NJU-ProjectN/nvboard master nvboard false NVBOARD_HOME
@@ -69,11 +89,20 @@ case $1 in
   npc)
     addenv NPC_HOME npc
     ;;
+  ysyxSoC)
+    init OSCPU/ysyxSoC 2607 ysyxSoC false
+    ;;
+  riscv-tests)
+    init NJU-ProjectN/riscv-tests-am master riscv-tests false
+    ;;
+  riscv-arch-test)
+    init NJU-ProjectN/riscv-arch-test-am main riscv-arch-test false
+    ;;
   archbench)
     init OSCPU/archbench main archbench false BENCH_HOME
     ;;
-  ysyxSoC)
-    init OSCPU/ysyxSoC 2607 ysyxSoC false
+  rt-thread)
+    init NJU-ProjectN/rt-thread-am master rt-thread-am false
     ;;
   *)
     echo "Invalid input..."
